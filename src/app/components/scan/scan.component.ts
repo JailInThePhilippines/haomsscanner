@@ -65,11 +65,24 @@ export class ScanComponent implements OnInit, OnDestroy {
         this.html5QrCode.stop();
       }
 
-      // Parse the QR code data
-      const qrData = JSON.parse(decodedText);
+      // Log the raw scanned text for debugging
+      console.log('Raw Scanned Text:', decodedText);
+
+      // Attempt to parse the QR code data
+      let qrData;
+      try {
+        // Try to parse as JSON first
+        qrData = JSON.parse(decodedText);
+      } catch (jsonError) {
+        // If JSON parsing fails, try to clean and parse
+        const cleanedText = this.cleanQRCodeData(decodedText);
+        qrData = JSON.parse(cleanedText);
+      }
 
       // Verify payment via service
-      this.dataService.verifyPaymentByQRCode({ qrCodeData: decodedText }).subscribe({
+      this.dataService.verifyPaymentByQRCode({ 
+        qrCodeData: JSON.stringify(qrData) 
+      }).subscribe({
         next: (response) => {
           this.scanResult = true;
           this.homeowner = response.homeowner;
@@ -80,12 +93,27 @@ export class ScanComponent implements OnInit, OnDestroy {
           this.scanResult = true;
           this.errorMessage = err.error?.message || 'Error verifying payment';
           this.homeowner = null;
+          console.error('Verification Error:', err);
         }
       });
     } catch (error) {
       this.scanResult = true;
       this.errorMessage = 'Invalid QR code format';
+      console.error('QR Code Parsing Error:', error);
     }
+  }
+
+  // Method to clean and standardize QR code data
+  private cleanQRCodeData(rawData: string): string {
+    // Remove any HTML or extra characters
+    let cleanedData = rawData
+      .replace(/<!DOCTYPE.*?>/i, '')    // Remove DOCTYPE
+      .replace(/<\/?html.*?>/i, '')     // Remove HTML tags
+      .replace(/<\/?body.*?>/i, '')     // Remove body tags
+      .trim();
+
+    console.log('Cleaned QR Code Data:', cleanedData);
+    return cleanedData;
   }
 
   resetScanner() {
