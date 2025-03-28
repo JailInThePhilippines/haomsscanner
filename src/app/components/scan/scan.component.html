@@ -1,21 +1,101 @@
 <div class="scanner-container">
-    <div id="reader" style="width: 100%;"></div>
-    <div *ngIf="scanResult" class="result-container">
-      <h2>Scan Result</h2>
-      <div *ngIf="homeowner">
-        <p><strong>Name:</strong> {{ homeowner.name }}</p>
-        <p><strong>Account Number:</strong> {{ homeowner.accountNumber }}</p>
-        <p><strong>Block:</strong> {{ homeowner.block }}</p>
-        <p><strong>Lot:</strong> {{ homeowner.lot }}</p>
-        <p><strong>Payment Status:</strong> 
-          <span [ngClass]="{
-            'paid': paymentStatus === 'paid', 
-            'unpaid': paymentStatus === 'unpaid'
-          }">
-            {{ paymentStatus | titlecase }}
-          </span>
-        </p>
+  <div id="reader" style="width: 100%;"></div>
+  
+  <div *ngIf="scanResult" class="result-container">
+    <!-- Successful Scan and Payment Verification -->
+    <ng-container *ngIf="homeowner && !errorMessage">
+      <div class="success-container">
+        <h2>Payment Verification</h2>
+        <div class="homeowner-details">
+          <div class="detail-row">
+            <span class="label">Name:</span>
+            <span class="value">{{ homeowner.name }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Account Number:</span>
+            <span class="value">{{ homeowner.accountNumber }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Block:</span>
+            <span class="value">{{ homeowner.block }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Lot:</span>
+            <span class="value">{{ homeowner.lot }}</span>
+          </div>
+          <div class="detail-row payment-status">
+            <span class="label">Payment Status:</span>
+            <span 
+              [ngClass]="{
+                'paid': paymentStatus === 'paid', 
+                'unpaid': paymentStatus === 'unpaid'
+              }"
+            >
+              {{ paymentStatus | titlecase }}
+            </span>
+          </div>
+        </div>
       </div>
-      <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
-    </div>
+    </ng-container>
+
+    <!-- Error Handling -->
+    <ng-container *ngIf="errorMessage">
+      <div class="error-container">
+        <h2>Verification Error</h2>
+        <div class="error-details">
+          <p class="error-message">{{ errorMessage }}</p>
+          
+          <!-- Specific Error Scenarios -->
+          <div class="error-guidance" *ngIf="errorMessage.includes('Homeowner not found')">
+            <h3>Possible Reasons:</h3>
+            <ul>
+              <li>Incorrect block or lot number</li>
+              <li>QR code may be outdated</li>
+              <li>Homeowner record may have been deleted</li>
+            </ul>
+            <p>Suggestions:</p>
+            <ul>
+              <li>Verify the QR code details</li>
+              <li>Check with property management</li>
+              <li>Try scanning again</li>
+            </ul>
+          </div>
+
+          <div class="error-guidance" *ngIf="errorMessage.includes('Invalid QR code')">
+            <h3>QR Code Issues:</h3>
+            <ul>
+              <li>Ensure QR code is clear and fully visible</li>
+              <li>Check if QR code is damaged or distorted</li>
+              <li>Verify QR code was generated correctly</li>
+            </ul>
+            <p>Suggestions:</p>
+            <ul>
+              <li>Request a new QR code</li>
+              <li>Clean the QR code surface</li>
+              <li>Ensure good lighting</li>
+            </ul>
+          </div>
+
+          <div class="error-guidance" *ngIf="errorMessage.includes('Server Error')">
+            <h3>System Issues:</h3>
+            <ul>
+              <li>Temporary system unavailability</li>
+              <li>Network connectivity problem</li>
+              <li>Backend service interruption</li>
+            </ul>
+            <p>Suggestions:</p>
+            <ul>
+              <li>Check your internet connection</li>
+              <li>Wait a few moments and try again</li>
+              <li>Contact technical support</li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="error-actions">
+          <button (click)="resetScanner()">Try Again</button>
+        </div>
+      </div>
+    </ng-container>
   </div>
+</div>
