@@ -11,6 +11,6 @@ export class DataService {
   constructor(private http: HttpClient) { }
 
   verifyPaymentByQRCode(qrData: any): Observable<any> {
-    return this.http.post<any>(`${this.baseUrl}/verify-payment-by-qr`, qrData);
+    return this.http.post<any>(`${this.baseUrl}/monthlydues/verify-payment-by-qr`, qrData);
   }
 }
