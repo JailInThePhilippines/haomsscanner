@@ -13,7 +13,7 @@ export class AuthService {
   public currentUser$ = this.currentUserSubject.asObservable();
 
   private tokenExpirationTimer: any;
-  private baseUrl = 'http://localhost:5000/api/superadmin';
+  private baseUrl = 'https://hoamsapi.onrender.com/api/superadmin';
 
   constructor(
     private http: HttpClient,
