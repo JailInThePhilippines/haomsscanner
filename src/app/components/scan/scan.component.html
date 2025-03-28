@@ -1,0 +1,21 @@
+<div class="scanner-container">
+    <div id="reader" style="width: 100%;"></div>
+    <div *ngIf="scanResult" class="result-container">
+      <h2>Scan Result</h2>
+      <div *ngIf="homeowner">
+        <p><strong>Name:</strong> {{ homeowner.name }}</p>
+        <p><strong>Account Number:</strong> {{ homeowner.accountNumber }}</p>
+        <p><strong>Block:</strong> {{ homeowner.block }}</p>
+        <p><strong>Lot:</strong> {{ homeowner.lot }}</p>
+        <p><strong>Payment Status:</strong> 
+          <span [ngClass]="{
+            'paid': paymentStatus === 'paid', 
+            'unpaid': paymentStatus === 'unpaid'
+          }">
+            {{ paymentStatus | titlecase }}
+          </span>
+        </p>
+      </div>
+      <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
+    </div>
+  </div>
