@@ -17,13 +17,14 @@ export class ScanComponent implements OnInit, OnDestroy {
   paymentStatus: string = '';
   errorMessage: string = '';
 
-  constructor(private dataService: DataService) { }
+  constructor(private dataService: DataService) {}
 
   ngOnInit() {
     this.initializeScanner();
   }
 
   initializeScanner() {
+    // Create Html5Qrcode with a null check
     const readerElement = document.getElementById('reader');
     if (!readerElement) {
       this.errorMessage = 'Unable to find scanner element';
@@ -34,25 +35,13 @@ export class ScanComponent implements OnInit, OnDestroy {
 
     Html5Qrcode.getCameras().then(cameras => {
       if (cameras && cameras.length) {
-        // Find the back camera
-        const backCamera = cameras.find(camera =>
-          camera.label.toLowerCase().includes('back') ||
-          camera.label.toLowerCase().includes('rear')
-        );
-
-        // If back camera not found, use the last camera (typically back camera)
-        const cameraId = backCamera
-          ? backCamera.id
-          : cameras[cameras.length - 1].id;
-
+        const cameraId = cameras[0].id;
+        
+        // Additional null check before calling start
         if (this.html5QrCode) {
           this.html5QrCode.start(
-            cameraId,
-            {
-              fps: 10,
-              qrbox: 250,
-              aspectRatio: 1.333 // Optional: maintain a standard aspect ratio
-            },
+            cameraId, 
+            { fps: 10, qrbox: 250 },
             this.onScanSuccess.bind(this),
             this.onScanError.bind(this)
           ).catch(err => {
