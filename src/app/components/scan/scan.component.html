@@ -1,36 +1,34 @@
-<div class="scanner-container flex flex-col items-center justify-center min-h-screen bg-sky-900 text-white p-6">
-  <!-- QR Code Scanner -->
-  <div id="reader" class="w-full max-w-md bg-white rounded-lg shadow-lg p-4"></div>
-
-  <div *ngIf="scanResult" class="result-container w-full max-w-lg mt-6">
-    <!-- Success Display -->
+<div class="scanner-container">
+  <div id="reader" style="width: 100%;"></div>
+  
+  <div *ngIf="scanResult" class="result-container">
+    <!-- Successful Scan and Payment Verification -->
     <ng-container *ngIf="homeowner && !errorMessage">
-      <div class="success-container bg-white rounded-lg shadow-lg p-6 text-gray-900">
-        <h2 class="text-2xl font-bold text-center text-sky-900 mb-4">Payment Verification</h2>
-        
-        <div class="homeowner-details space-y-3">
-          <div class="detail-row flex justify-between">
-            <span class="font-semibold">Name:</span>
-            <span class="text-gray-700">{{ homeowner.name }}</span>
+      <div class="success-container">
+        <h2>Payment Verification</h2>
+        <div class="homeowner-details">
+          <div class="detail-row">
+            <span class="label">Name:</span>
+            <span class="value">{{ homeowner.name }}</span>
           </div>
-          <div class="detail-row flex justify-between">
-            <span class="font-semibold">Account Number:</span>
-            <span class="text-gray-700">{{ homeowner.accountNumber }}</span>
+          <div class="detail-row">
+            <span class="label">Account Number:</span>
+            <span class="value">{{ homeowner.accountNumber }}</span>
           </div>
-          <div class="detail-row flex justify-between">
-            <span class="font-semibold">Block:</span>
-            <span class="text-gray-700">{{ homeowner.block }}</span>
+          <div class="detail-row">
+            <span class="label">Block:</span>
+            <span class="value">{{ homeowner.block }}</span>
           </div>
-          <div class="detail-row flex justify-between">
-            <span class="font-semibold">Lot:</span>
-            <span class="text-gray-700">{{ homeowner.lot }}</span>
+          <div class="detail-row">
+            <span class="label">Lot:</span>
+            <span class="value">{{ homeowner.lot }}</span>
           </div>
-          <div class="detail-row flex justify-between text-lg">
-            <span class="font-semibold">Payment Status:</span>
+          <div class="detail-row payment-status">
+            <span class="label">Payment Status:</span>
             <span 
               [ngClass]="{
-                'text-green-600 font-bold': paymentStatus === 'paid', 
-                'text-red-600 font-bold': paymentStatus === 'unpaid'
+                'paid': paymentStatus === 'paid', 
+                'unpaid': paymentStatus === 'unpaid'
               }"
             >
               {{ paymentStatus | titlecase }}
@@ -42,46 +40,60 @@
 
     <!-- Error Handling -->
     <ng-container *ngIf="errorMessage">
-      <div class="error-container bg-white rounded-lg shadow-lg p-6 text-gray-900">
-        <h2 class="text-2xl font-bold text-center text-red-600 mb-4">Verification Error</h2>
+      <div class="error-container">
+        <h2>Verification Error</h2>
+        <div class="error-details">
+          <p class="error-message">{{ errorMessage }}</p>
+          
+          <!-- Specific Error Scenarios -->
+          <div class="error-guidance" *ngIf="errorMessage.includes('Homeowner not found')">
+            <h3>Possible Reasons:</h3>
+            <ul>
+              <li>Incorrect block or lot number</li>
+              <li>QR code may be outdated</li>
+              <li>Homeowner record may have been deleted</li>
+            </ul>
+            <p>Suggestions:</p>
+            <ul>
+              <li>Verify the QR code details</li>
+              <li>Check with property management</li>
+              <li>Try scanning again</li>
+            </ul>
+          </div>
+
+          <div class="error-guidance" *ngIf="errorMessage.includes('Invalid QR code')">
+            <h3>QR Code Issues:</h3>
+            <ul>
+              <li>Ensure QR code is clear and fully visible</li>
+              <li>Check if QR code is damaged or distorted</li>
+              <li>Verify QR code was generated correctly</li>
+            </ul>
+            <p>Suggestions:</p>
+            <ul>
+              <li>Request a new QR code</li>
+              <li>Clean the QR code surface</li>
+              <li>Ensure good lighting</li>
+            </ul>
+          </div>
+
+          <div class="error-guidance" *ngIf="errorMessage.includes('Server Error')">
+            <h3>System Issues:</h3>
+            <ul>
+              <li>Temporary system unavailability</li>
+              <li>Network connectivity problem</li>
+              <li>Backend service interruption</li>
+            </ul>
+            <p>Suggestions:</p>
+            <ul>
+              <li>Check your internet connection</li>
+              <li>Wait a few moments and try again</li>
+              <li>Contact technical support</li>
+            </ul>
+          </div>
+        </div>
         
-        <p class="error-message text-center text-red-700 font-semibold mb-4">{{ errorMessage }}</p>
-        
-        <!-- Specific Error Scenarios -->
-        <div class="error-guidance bg-red-100 rounded-lg p-4 mt-2" *ngIf="errorMessage.includes('Homeowner not found')">
-          <h3 class="font-bold text-red-700">Possible Reasons:</h3>
-          <ul class="list-disc pl-5 text-red-600">
-            <li>Incorrect block or lot number</li>
-            <li>QR code may be outdated</li>
-            <li>Homeowner record may have been deleted</li>
-          </ul>
-        </div>
-
-        <div class="error-guidance bg-yellow-100 rounded-lg p-4 mt-2" *ngIf="errorMessage.includes('Invalid QR code')">
-          <h3 class="font-bold text-yellow-700">QR Code Issues:</h3>
-          <ul class="list-disc pl-5 text-yellow-600">
-            <li>Ensure QR code is clear and fully visible</li>
-            <li>Check if QR code is damaged</li>
-            <li>Verify QR code was generated correctly</li>
-          </ul>
-        </div>
-
-        <div class="error-guidance bg-gray-100 rounded-lg p-4 mt-2" *ngIf="errorMessage.includes('Server Error')">
-          <h3 class="font-bold text-gray-700">System Issues:</h3>
-          <ul class="list-disc pl-5 text-gray-600">
-            <li>Temporary system unavailability</li>
-            <li>Network connectivity problem</li>
-            <li>Backend service interruption</li>
-          </ul>
-        </div>
-
-        <div class="error-actions flex justify-center mt-4">
-          <button 
-            (click)="resetScanner()" 
-            class="bg-red-600 text-white px-6 py-2 rounded-lg shadow-md hover:bg-red-700 transition"
-          >
-            Try Again
-          </button>
+        <div class="error-actions">
+          <button (click)="resetScanner()">Try Again</button>
         </div>
       </div>
     </ng-container>
