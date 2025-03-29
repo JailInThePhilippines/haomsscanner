@@ -18,7 +18,7 @@ export class ScanComponent implements OnInit, OnDestroy {
   paymentStatus: string = '';
   errorMessage: string = '';
 
-  constructor(private dataService: DataService) {}
+  constructor(private dataService: DataService) { }
 
   ngOnInit() {
     this.initializeScanner();
@@ -35,18 +35,18 @@ export class ScanComponent implements OnInit, OnDestroy {
 
     Html5Qrcode.getCameras().then(cameras => {
       if (cameras && cameras.length) {
-        const backCamera = cameras.find(camera => 
-          camera.label.toLowerCase().includes('back') || 
+        const backCamera = cameras.find(camera =>
+          camera.label.toLowerCase().includes('back') ||
           camera.label.toLowerCase().includes('rear')
         );
 
-        const cameraId = backCamera 
-          ? backCamera.id 
+        const cameraId = backCamera
+          ? backCamera.id
           : cameras[cameras.length - 1].id;
-        
+
         if (this.html5QrCode) {
           this.html5QrCode.start(
-            cameraId, 
+            cameraId,
             { fps: 10, qrbox: 250 },
             this.onScanSuccess.bind(this),
             this.onScanError.bind(this)
@@ -80,8 +80,8 @@ export class ScanComponent implements OnInit, OnDestroy {
         qrData = JSON.parse(cleanedText);
       }
 
-      this.dataService.verifyPaymentByQRCode({ 
-        qrCodeData: JSON.stringify(qrData) 
+      this.dataService.verifyPaymentByQRCode({
+        qrCodeData: JSON.stringify(qrData)
       }).subscribe({
         next: (response) => {
           this.scanResult = true;
@@ -105,7 +105,7 @@ export class ScanComponent implements OnInit, OnDestroy {
 
   private cleanQRCodeData(rawData: string): string {
     let cleanedData = rawData
-      .replace(/<!DOCTYPE.*?>/i, '') 
+      .replace(/<!DOCTYPE.*?>/i, '')
       .replace(/<\/?html.*?>/i, '')
       .replace(/<\/?body.*?>/i, '')
       .trim();
@@ -129,16 +129,37 @@ export class ScanComponent implements OnInit, OnDestroy {
 
   public completeReset() {
     if (this.html5QrCode) {
-      this.html5QrCode.stop().then(() => {
+      try {
+        const isScanning = this.html5QrCode.isScanning;
+
+        if (isScanning) {
+          this.html5QrCode.stop().then(() => {
+            this.html5QrCode = null;
+            this.resetScanState();
+          }).catch(err => {
+            console.error('Error stopping scanner:', err);
+            this.html5QrCode = null;
+            this.resetScanState();
+          });
+        } else {
+          this.html5QrCode = null;
+          this.resetScanState();
+        }
+      } catch (error) {
+        console.error('Error in completeReset:', error);
         this.html5QrCode = null;
-        this.scanResult = false;
-        this.homeowner = null;
-        this.paymentStatus = '';
-        this.errorMessage = '';
-      }).catch(err => {
-        console.error('Error stopping scanner:', err);
-      });
+        this.resetScanState();
+      }
+    } else {
+      this.resetScanState();
     }
+  }
+
+  private resetScanState() {
+    this.scanResult = false;
+    this.homeowner = null;
+    this.paymentStatus = '';
+    this.errorMessage = '';
   }
 
   onScanError(errorMessage: string) {
@@ -147,7 +168,18 @@ export class ScanComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     if (this.html5QrCode) {
-      this.html5QrCode.stop();
+      try {
+        const isScanning = this.html5QrCode.isScanning;
+
+        if (isScanning) {
+          this.html5QrCode.stop().catch(err => {
+            console.error('Error stopping scanner in ngOnDestroy:', err);
+          });
+        }
+      } catch (error) {
+        console.error('Error in ngOnDestroy:', error);
+      }
+      this.html5QrCode = null;
     }
   }
 }
