@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { ScanComponent } from '../scan/scan.component';
 import { CommonModule } from '@angular/common';
 
@@ -10,6 +10,7 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent {
+  @ViewChild(ScanComponent) scanComponent!: ScanComponent;
   showScannerModal = false;
   
   openScannerModal() {
@@ -17,6 +18,9 @@ export class HomeComponent {
   }
   
   closeScannerModal() {
+    if (this.scanComponent) {
+      this.scanComponent.completeReset();
+    }
     this.showScannerModal = false;
   }
 }

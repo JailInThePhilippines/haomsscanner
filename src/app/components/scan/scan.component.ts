@@ -35,13 +35,11 @@ export class ScanComponent implements OnInit, OnDestroy {
 
     Html5Qrcode.getCameras().then(cameras => {
       if (cameras && cameras.length) {
-        // Find the back camera
         const backCamera = cameras.find(camera => 
           camera.label.toLowerCase().includes('back') || 
           camera.label.toLowerCase().includes('rear')
         );
 
-        // If no specific back camera found, use the last camera (typically back camera)
         const cameraId = backCamera 
           ? backCamera.id 
           : cameras[cameras.length - 1].id;
@@ -68,26 +66,20 @@ export class ScanComponent implements OnInit, OnDestroy {
 
   onScanSuccess(decodedText: string) {
     try {
-      // Stop scanning to prevent multiple scans
       if (this.html5QrCode) {
         this.html5QrCode.stop();
       }
 
-      // Log the raw scanned text for debugging
       console.log('Raw Scanned Text:', decodedText);
 
-      // Attempt to parse the QR code data
       let qrData;
       try {
-        // Try to parse as JSON first
         qrData = JSON.parse(decodedText);
       } catch (jsonError) {
-        // If JSON parsing fails, try to clean and parse
         const cleanedText = this.cleanQRCodeData(decodedText);
         qrData = JSON.parse(cleanedText);
       }
 
-      // Verify payment via service
       this.dataService.verifyPaymentByQRCode({ 
         qrCodeData: JSON.stringify(qrData) 
       }).subscribe({
@@ -111,13 +103,11 @@ export class ScanComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Method to clean and standardize QR code data
   private cleanQRCodeData(rawData: string): string {
-    // Remove any HTML or extra characters
     let cleanedData = rawData
-      .replace(/<!DOCTYPE.*?>/i, '')    // Remove DOCTYPE
-      .replace(/<\/?html.*?>/i, '')     // Remove HTML tags
-      .replace(/<\/?body.*?>/i, '')     // Remove body tags
+      .replace(/<!DOCTYPE.*?>/i, '') 
+      .replace(/<\/?html.*?>/i, '')
+      .replace(/<\/?body.*?>/i, '')
       .trim();
 
     console.log('Cleaned QR Code Data:', cleanedData);
@@ -125,7 +115,6 @@ export class ScanComponent implements OnInit, OnDestroy {
   }
 
   resetScanner(closeAfterReset: boolean = false) {
-    // Reset all state variables
     this.scanResult = false;
     this.homeowner = null;
     this.paymentStatus = '';
@@ -134,8 +123,21 @@ export class ScanComponent implements OnInit, OnDestroy {
     if (closeAfterReset) {
       this.scanComplete.emit();
     } else {
-      // Restart the scanner
       this.initializeScanner();
+    }
+  }
+
+  public completeReset() {
+    if (this.html5QrCode) {
+      this.html5QrCode.stop().then(() => {
+        this.html5QrCode = null;
+        this.scanResult = false;
+        this.homeowner = null;
+        this.paymentStatus = '';
+        this.errorMessage = '';
+      }).catch(err => {
+        console.error('Error stopping scanner:', err);
+      });
     }
   }
 
@@ -143,15 +145,7 @@ export class ScanComponent implements OnInit, OnDestroy {
     console.log(`Scan error: ${errorMessage}`);
   }
 
-  closeScanner() {
-    if (this.html5QrCode) {
-      this.html5QrCode.stop().catch(err => console.error("Error stopping scanner:", err));
-    }
-    this.scanComplete.emit();
-  }
-
   ngOnDestroy() {
-    // Clean up scanner with null check
     if (this.html5QrCode) {
       this.html5QrCode.stop();
     }
