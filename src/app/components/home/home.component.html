@@ -1,15 +1,17 @@
-<div class="home-container">
-  <h1>Payment Verification</h1>
-  <button (click)="openScannerModal()">Scan QR Code</button>
+<div class="p-5 text-center">
+  <h1 class="text-2xl font-bold mb-4">Payment Verification</h1>
+  <button (click)="openScannerModal()" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded transition duration-300">
+    Scan QR Code
+  </button>
   
   <!-- Scanner Modal -->
-  <div *ngIf="showScannerModal" class="modal-overlay">
-    <div class="modal-container">
-      <div class="modal-header">
-        <h2>Scan QR Code</h2>
-        <button class="close-button" (click)="closeScannerModal()">×</button>
+  <div *ngIf="showScannerModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+    <div class="bg-white rounded-lg w-11/12 max-w-lg max-h-[90vh] overflow-auto shadow-xl">
+      <div class="flex justify-between items-center p-4 border-b">
+        <h2 class="text-xl font-semibold">Scan QR Code</h2>
+        <button class="text-2xl text-gray-600 hover:text-gray-800" (click)="closeScannerModal()">×</button>
       </div>
-      <div class="modal-body">
+      <div class="p-4">
         <app-scan (scanComplete)="closeScannerModal()"></app-scan>
       </div>
     </div>
