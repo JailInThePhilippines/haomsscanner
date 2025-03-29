@@ -1,6 +1,6 @@
 <div class="scanner-container">
   <div id="reader" style="width: 100%;"></div>
-  
+
   <div *ngIf="scanResult" class="result-container">
     <!-- Successful Scan and Payment Verification -->
     <ng-container *ngIf="homeowner && !errorMessage">
@@ -25,15 +25,17 @@
           </div>
           <div class="detail-row payment-status">
             <span class="label">Payment Status:</span>
-            <span 
-              [ngClass]="{
+            <span [ngClass]="{
                 'paid': paymentStatus === 'paid', 
                 'unpaid': paymentStatus === 'unpaid'
-              }"
-            >
+              }">
               {{ paymentStatus | titlecase }}
             </span>
           </div>
+        </div>
+        <div class="action-buttons">
+          <button (click)="closeScanner()" class="done-button">Done</button>
+          <button (click)="resetScanner()" class="scan-again-button">Scan Again</button>
         </div>
       </div>
     </ng-container>
@@ -44,7 +46,7 @@
         <h2>Verification Error</h2>
         <div class="error-details">
           <p class="error-message">{{ errorMessage }}</p>
-          
+
           <!-- Specific Error Scenarios -->
           <div class="error-guidance" *ngIf="errorMessage.includes('Homeowner not found')">
             <h3>Possible Reasons:</h3>
@@ -91,7 +93,7 @@
             </ul>
           </div>
         </div>
-        
+
         <div class="error-actions">
           <button (click)="resetScanner()">Try Again</button>
         </div>

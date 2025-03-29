@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { Html5Qrcode } from 'html5-qrcode';
 import { DataService } from '../../services/data.service';
 import { CommonModule } from '@angular/common';
@@ -11,6 +11,7 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./scan.component.css']
 })
 export class ScanComponent implements OnInit, OnDestroy {
+  @Output() scanComplete = new EventEmitter<void>();
   private html5QrCode: Html5Qrcode | null = null;
   scanResult: boolean = false;
   homeowner: any = null;
@@ -123,19 +124,30 @@ export class ScanComponent implements OnInit, OnDestroy {
     return cleanedData;
   }
 
-  resetScanner() {
+  resetScanner(closeAfterReset: boolean = false) {
     // Reset all state variables
     this.scanResult = false;
     this.homeowner = null;
     this.paymentStatus = '';
     this.errorMessage = '';
 
-    // Restart the scanner
-    this.initializeScanner();
+    if (closeAfterReset) {
+      this.scanComplete.emit();
+    } else {
+      // Restart the scanner
+      this.initializeScanner();
+    }
   }
 
   onScanError(errorMessage: string) {
     console.log(`Scan error: ${errorMessage}`);
+  }
+
+  closeScanner() {
+    if (this.html5QrCode) {
+      this.html5QrCode.stop().catch(err => console.error("Error stopping scanner:", err));
+    }
+    this.scanComplete.emit();
   }
 
   ngOnDestroy() {

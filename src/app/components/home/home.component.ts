@@ -10,9 +10,13 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent {
-  isScanningActive = false;
-
-  startScanning() {
-    this.isScanningActive = true;
+  showScannerModal = false;
+  
+  openScannerModal() {
+    this.showScannerModal = true;
+  }
+  
+  closeScannerModal() {
+    this.showScannerModal = false;
   }
 }
