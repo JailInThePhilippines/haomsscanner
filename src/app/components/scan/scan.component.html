@@ -1,6 +1,6 @@
 <div class="flex flex-col items-center w-full max-w-lg mx-auto">
   <div id="reader" class="w-full"></div>
-
+  
   <div *ngIf="scanResult" class="mt-5 w-full p-4 rounded-lg shadow-md">
     <!-- Successful Scan and Payment Verification -->
     <ng-container *ngIf="homeowner && !errorMessage">
@@ -15,10 +15,6 @@
             <span class="font-semibold text-gray-600">Lot:</span>
             <span class="text-gray-800">{{ homeowner.lot }}</span>
           </div>
-          <div class="flex justify-between py-2 px-2 mb-2 border-b">
-            <span class="font-semibold text-gray-600">Month:</span>
-            <span class="text-gray-800">{{ getMonthName(homeowner.currentMonth) }}</span>
-          </div>
           <div class="flex justify-between py-2 px-2 mb-2 font-bold">
             <span class="text-gray-600">Payment Status:</span>
             <span [ngClass]="paymentStatus === 'paid' ? 'text-green-600' : 'text-red-600'">
@@ -28,21 +24,20 @@
         </div>
         <!-- Action Buttons -->
         <div class="flex justify-center gap-3 mt-5">
-          <button (click)="resetScanner()"
-            class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded transition duration-300">
+          <button (click)="resetScanner()" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded transition duration-300">
             Scan Again
           </button>
         </div>
       </div>
     </ng-container>
-
+    
     <!-- Error Handling -->
     <ng-container *ngIf="errorMessage">
       <div class="bg-red-50 border border-red-200 rounded-lg p-5">
         <h2 class="text-xl font-bold mb-3 text-center">Verification Error</h2>
         <div>
           <p class="text-red-700 font-bold mb-4">{{ errorMessage }}</p>
-
+          
           <!-- Specific Error Scenarios -->
           <div *ngIf="errorMessage.includes('Homeowner not found')" class="bg-red-100 rounded-md p-4 mt-4">
             <h3 class="text-red-700 font-semibold mb-2">Possible Reasons:</h3>
@@ -58,7 +53,7 @@
               <li>Try scanning again</li>
             </ul>
           </div>
-
+          
           <div *ngIf="errorMessage.includes('Invalid QR code')" class="bg-red-100 rounded-md p-4 mt-4">
             <h3 class="text-red-700 font-semibold mb-2">QR Code Issues:</h3>
             <ul class="list-disc pl-5 mb-2">
@@ -73,7 +68,7 @@
               <li>Ensure good lighting</li>
             </ul>
           </div>
-
+          
           <div *ngIf="errorMessage.includes('Server Error')" class="bg-red-100 rounded-md p-4 mt-4">
             <h3 class="text-red-700 font-semibold mb-2">System Issues:</h3>
             <ul class="list-disc pl-5 mb-2">
@@ -89,10 +84,9 @@
             </ul>
           </div>
         </div>
-
+        
         <div class="flex justify-center gap-3 mt-5">
-          <button (click)="resetScanner()"
-            class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded transition duration-300">
+          <button (click)="resetScanner()" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded transition duration-300">
             Try Again
           </button>
         </div>
