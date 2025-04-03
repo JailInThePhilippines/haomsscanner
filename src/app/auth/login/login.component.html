@@ -1,5 +1,5 @@
 <!-- Main container -->
-<div class="area min-h-screen flex flex-col items-center justify-center  p-4">
+<div class="area min-h-screen flex flex-col items-center justify-center p-4">
     <ul class="circles">
         <li></li>
         <li></li>
@@ -65,6 +65,33 @@
                     </div>
                     <div *ngIf="submitted && f['password'].errors" class="text-red-300 text-xs mt-1">
                         <span *ngIf="f['password'].errors['required']">Password is required</span>
+                    </div>
+                </div>
+
+                <!-- Role selection -->
+                <div class="space-y-2">
+                    <label for="role" class="text-white text-sm font-medium block">Login As</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20"
+                                fill="currentColor">
+                                <path fill-rule="evenodd"
+                                    d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <select id="role" formControlName="role"
+                            class="bg-opacity-40 text-white placeholder-gray-400 w-full pl-10 pr-4 py-3 rounded-lg border border-gray-700 focus:outline-none focus:border-blue-900 focus:ring-1 focus:ring-blue-900 transition duration-200 appearance-none">
+                            <option value="superadmin" class="bg-gray-800 text-white">Super Admin</option>
+                            <option value="admin" class="bg-gray-800 text-white">Admin</option>
+                        </select>
+                        <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </div>
                     </div>
                 </div>
 

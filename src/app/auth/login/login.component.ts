@@ -16,7 +16,8 @@ export class LoginComponent implements OnInit {
   loading = false;
   submitted = false;
   error = '';
-  returnUrl: string = '/superadmin/home';
+  returnUrl: string = '/home';
+  userRole: 'superadmin' | 'admin' = 'superadmin';
 
   constructor(
     private formBuilder: FormBuilder,
@@ -26,16 +27,30 @@ export class LoginComponent implements OnInit {
   ) {
     this.loginForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required]
+      password: ['', Validators.required],
+      role: ['superadmin', Validators.required]
     });
 
     if (this.authService.isAuthenticated()) {
-      this.router.navigate(['/superadmin/home']);
+      const role = this.authService.getCurrentUserRole();
+      this.navigateToHomePage(role || 'superadmin');
     }
   }
 
   ngOnInit(): void {
-    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/superadmin/home';
+    const routeRole = this.route.snapshot.queryParams['role'];
+    if (routeRole === 'admin') {
+      this.userRole = 'admin';
+      this.loginForm.get('role')?.setValue('admin');
+      this.returnUrl = '/home';
+    } else {
+      this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/home';
+    }
+
+    this.loginForm.get('role')?.valueChanges.subscribe(role => {
+      this.userRole = role;
+      this.returnUrl = role === 'admin' ? '/home' : '/home';
+    });
   }
 
   get f() { return this.loginForm.controls; }
@@ -50,7 +65,11 @@ export class LoginComponent implements OnInit {
     this.loading = true;
     this.error = '';
 
-    this.authService.login(this.f['email'].value, this.f['password'].value)
+    const email = this.f['email'].value;
+    const password = this.f['password'].value;
+    const role = this.f['role'].value;
+
+    this.authService.login(email, password, role)
       .subscribe({
         next: () => {
           Swal.fire({
@@ -62,7 +81,7 @@ export class LoginComponent implements OnInit {
             timer: 3000
           });
 
-          this.router.navigate([this.returnUrl]);
+          this.navigateToHomePage(role);
         },
         error: error => {
           this.error = error.message || 'Invalid credentials';
@@ -79,5 +98,10 @@ export class LoginComponent implements OnInit {
           });
         }
       });
+  }
+
+  navigateToHomePage(role: string): void {
+    const homePath = role === 'admin' ? '/home' : '/home';
+    this.router.navigate([homePath]);
   }
 }

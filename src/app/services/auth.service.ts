@@ -13,7 +13,10 @@ export class AuthService {
   public currentUser$ = this.currentUserSubject.asObservable();
 
   private tokenExpirationTimer: any;
-  private baseUrl = 'https://hoamsapi.onrender.com/api/superadmin';
+  private baseUrls = {
+    superadmin: 'https://hoamsapi.onrender.com/api/superadmin',
+    admin: 'https://hoamsapi.onrender.com/api/admin'
+  };
 
   constructor(
     private http: HttpClient,
@@ -25,6 +28,7 @@ export class AuthService {
   private loadUserFromStorage() {
     const userData = localStorage.getItem('currentUser');
     const token = localStorage.getItem('accessToken');
+    const userRole = localStorage.getItem('userRole');
 
     if (userData && token) {
       const user = JSON.parse(userData);
@@ -34,12 +38,15 @@ export class AuthService {
     }
   }
 
-  login(email: string, password: string): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.baseUrl}/auth/login`, { email, password }, { withCredentials: true })
+  login(email: string, password: string, role: 'superadmin' | 'admin' = 'superadmin'): Observable<AuthResponse> {
+    const baseUrl = this.baseUrls[role];
+    
+    return this.http.post<AuthResponse>(`${baseUrl}/auth/login`, { email, password }, { withCredentials: true })
       .pipe(
         tap(response => {
           localStorage.setItem('currentUser', JSON.stringify(response.user));
           localStorage.setItem('accessToken', response.accessToken);
+          localStorage.setItem('userRole', role);
 
           this.currentUserSubject.next(response.user);
 
@@ -52,17 +59,29 @@ export class AuthService {
       );
   }
 
+  loginAsSuperAdmin(email: string, password: string): Observable<AuthResponse> {
+    return this.login(email, password, 'superadmin');
+  }
+
+  loginAsAdmin(email: string, password: string): Observable<AuthResponse> {
+    return this.login(email, password, 'admin');
+  }
+
   logout(): void {
-    this.http.post(`${this.baseUrl}/logout`, {}).subscribe({
+    const role = localStorage.getItem('userRole') || 'superadmin';
+    const baseUrl = this.baseUrls[role as 'superadmin' | 'admin'];
+    
+    this.http.post(`${baseUrl}/logout`, {}).subscribe({
       next: () => this.handleLogout(),
       error: () => this.handleLogout()
     });
   }
 
-  private handleLogout(): void {
+  public handleLogout(): void {
     localStorage.removeItem('currentUser');
     localStorage.removeItem('accessToken');
-    localStorage.removeItem('fullName')
+    localStorage.removeItem('fullName');
+    localStorage.removeItem('userRole');
     this.currentUserSubject.next(null);
 
     if (this.tokenExpirationTimer) {
@@ -74,20 +93,31 @@ export class AuthService {
   }
 
   refreshToken(): Observable<string> {
-    return this.http.post<{ accessToken: string }>(`${this.baseUrl}/refresh-token`, {}, {
+    const role = localStorage.getItem('userRole') || 'superadmin';
+    const baseUrl = this.baseUrls[role as 'superadmin' | 'admin'];
+    
+    return this.http.post<{ accessToken: string, user?: User }>(`${baseUrl}/refresh-token`, {}, {
       withCredentials: true
     })
       .pipe(
         map(response => {
           localStorage.setItem('accessToken', response.accessToken);
-
-          this.autoLogout(15 * 60 * 1000);
-
+          
+          if (response.user) {
+            localStorage.setItem('currentUser', JSON.stringify(response.user));
+            this.currentUserSubject.next(response.user);
+          }
+          
+          const expirationTime = this.getTokenRemainingTime(response.accessToken);
+          this.autoLogout(expirationTime);
+          
           return response.accessToken;
         }),
         catchError(error => {
           console.error('Token refresh failed:', error);
-          this.handleLogout();
+          if (error.status === 401 || error.status === 403) {
+            this.handleLogout();
+          }
           return throwError(() => new Error('Token refresh failed'));
         })
       );
@@ -96,13 +126,22 @@ export class AuthService {
   autoLogout(expirationDuration: number): void {
     if (this.tokenExpirationTimer) {
       clearTimeout(this.tokenExpirationTimer);
+      this.tokenExpirationTimer = null;
     }
-
-    this.tokenExpirationTimer = setTimeout(() => {
-      this.refreshToken().subscribe({
-        error: () => this.handleLogout()
-      });
-    }, expirationDuration - 60000);
+    
+    if (expirationDuration > 0) {
+      const refreshTime = expirationDuration > 60000 ? expirationDuration - 60000 : expirationDuration / 2;
+      
+      this.tokenExpirationTimer = setTimeout(() => {
+        this.refreshToken().subscribe({
+          next: token => console.log('Token refreshed successfully via timer'),
+          error: (err) => {
+            console.error('Failed to refresh token via timer:', err);
+            this.handleLogout();
+          }
+        });
+      }, refreshTime);
+    }
   }
 
   getToken(): string | null {
@@ -115,6 +154,14 @@ export class AuthService {
 
   isSuperAdmin(): boolean {
     return this.currentUserSubject.value?.role === 'superadmin';
+  }
+
+  isAdmin(): boolean {
+    return this.currentUserSubject.value?.role === 'admin';
+  }
+
+  getCurrentUserRole(): string | null {
+    return localStorage.getItem('userRole');
   }
 
   private getTokenRemainingTime(token: string): number {
