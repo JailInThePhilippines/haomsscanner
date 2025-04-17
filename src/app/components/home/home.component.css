@@ -1,0 +1,71 @@
+/* Additional styles for home component */
+.backdrop-blur-sm {
+    backdrop-filter: blur(4px);
+  }
+  
+  /* Animation for modal entrance */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  @keyframes slideIn {
+    from { transform: translateY(10px); }
+    to { transform: translateY(0); }
+  }
+  
+  [class*="fixed"] {
+    animation: fadeIn 0.3s ease-out;
+  }
+  
+  [class*="fixed"] > div {
+    animation: slideIn 0.3s ease-out;
+  }
+  
+  /* Logo subtle animation */
+  img[alt="Logo"] {
+    transition: transform 0.3s ease;
+  }
+  
+  img[alt="Logo"]:hover {
+    transform: scale(1.05);
+  }
+  
+  /* Improve button hover effects */
+  button {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  button::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.3);
+    opacity: 0;
+    border-radius: 100%;
+    transform: scale(1, 1) translate(-50%);
+    transform-origin: 50% 50%;
+  }
+  
+  button:focus:not(:active)::after {
+    animation: ripple 1s ease-out;
+  }
+  
+  @keyframes ripple {
+    0% {
+      transform: scale(0, 0);
+      opacity: 0.5;
+    }
+    20% {
+      transform: scale(25, 25);
+      opacity: 0.3;
+    }
+    100% {
+      opacity: 0;
+      transform: scale(40, 40);
+    }
+  }

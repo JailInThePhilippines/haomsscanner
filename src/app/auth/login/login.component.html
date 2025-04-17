@@ -1,5 +1,5 @@
 <!-- Main container -->
-<div class="area min-h-screen flex flex-col items-center justify-center p-4">
+<div class="area min-h-screen flex flex-col items-center justify-center  p-4">
     <ul class="circles">
         <li></li>
         <li></li>
@@ -19,16 +19,16 @@
             <!-- Logo and title section -->
             <div class="flex flex-col items-center mb-8">
                 <img src="hoa-removedbg.png" class="w-24 h-24 mb-4" alt="HOA Logo" />
-                <h1 class="text-3xl text-white font-bold text-center">HOA Scanner Application</h1>
+                <h1 class="text-3xl font-bold text-center">HOA Management Portal</h1>
                 <div class="h-1 w-24 bg-blue-950 mt-2 mb-4 rounded-full"></div>
-                <p class="text-white text-sm">Scan QR Code with ease</p>
+                <p class="text-gray-700 text-sm">Manage your community with ease</p>
             </div>
 
             <!-- Login form -->
             <form class="space-y-6" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
                 <!-- Email input -->
                 <div class="space-y-2">
-                    <label for="email" class="text-white text-sm font-medium block">Email Address</label>
+                    <label for="email" class="text-gray-700 text-sm font-medium block">Email Address</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20"
@@ -49,7 +49,7 @@
 
                 <!-- Password input -->
                 <div class="space-y-2">
-                    <label for="password" class="text-white text-sm font-medium block">Password</label>
+                    <label for="password" class="text-gray-700 text-sm font-medium block">Password</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20"
@@ -68,30 +68,31 @@
                     </div>
                 </div>
 
-                <!-- Role selection -->
                 <div class="space-y-2">
-                    <label for="role" class="text-white text-sm font-medium block">Login As</label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20"
-                                fill="currentColor">
-                                <path fill-rule="evenodd"
-                                    d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                                    clip-rule="evenodd" />
-                            </svg>
-                        </div>
-                        <select id="role" formControlName="role"
-                            class="bg-opacity-40 text-white placeholder-gray-400 w-full pl-10 pr-4 py-3 rounded-lg border border-gray-700 focus:outline-none focus:border-blue-900 focus:ring-1 focus:ring-blue-900 transition duration-200 appearance-none">
-                            <option value="superadmin" class="bg-gray-800 text-white">Super Admin</option>
-                            <option value="admin" class="bg-gray-800 text-white">Admin</option>
-                        </select>
-                        <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M19 9l-7 7-7-7"></path>
-                            </svg>
-                        </div>
+                    <label class="text-gray-700 text-sm font-medium block">Login As</label>
+                    <div class="role-toggle" formControlName="role">
+                        <input type="radio" id="superadmin" formControlName="role" value="superadmin" />
+                        <label for="superadmin" class="role-option">
+                            <span class="role-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd"
+                                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                            </span>
+                            Super Admin
+                        </label>
+                        <input type="radio" id="admin" formControlName="role" value="admin" />
+                        <label for="admin" class="role-option">
+                            <span class="role-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path
+                                        d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
+                                </svg>
+                            </span>
+                            Admin
+                        </label>
+                        <div class="slider"></div>
                     </div>
                 </div>
 
@@ -108,8 +109,17 @@
             </form>
 
             <!-- Footer text -->
-            <div class="mt-8 text-center text-white text-xs">
+            <div class="mt-8 text-center text-xs">
                 <p>© 2025 HOA Administration. All rights reserved.</p>
+            </div>
+        </div>
+        <div class="hidden lg:block lg:w-1/2 bg-cover bg-center">
+            <div class="h-full w-full bg-blue-900 bg-opacity-50 flex items-center">
+                <div class="px-12 py-12">
+                    <h2 class="text-white text-3xl font-bold leading-tight mb-4">Welcome to your community management
+                        portal</h2>
+                    <p class="text-gray-200 mb-6">Manage residents, QR Codes, and monthly dues all in one place.</p>
+                </div>
             </div>
         </div>
     </div>

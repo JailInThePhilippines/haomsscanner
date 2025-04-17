@@ -3,30 +3,42 @@ import { ScanComponent } from '../scan/scan.component';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
 import Swal from 'sweetalert2';
+import { HistoryComponent } from '../history/history.component';
 
 @Component({
   selector: 'app-home',
-  imports: [ScanComponent, CommonModule],
+  imports: [ScanComponent, CommonModule, HistoryComponent],
   standalone: true,
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent {
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService) { }
 
   @ViewChild(ScanComponent) scanComponent!: ScanComponent;
+  @ViewChild(HistoryComponent) historyComponent!: HistoryComponent;
+
   showScannerModal = false;
-  
+  showHistoryModal = false;
+
   openScannerModal() {
     this.showScannerModal = true;
   }
-  
+
+  openHistoryModal() {
+    this.showHistoryModal = true;
+  }
+
   closeScannerModal() {
     if (this.scanComponent) {
       this.scanComponent.completeReset();
     }
     this.showScannerModal = false;
+  }
+
+  closeHistoryModal() {
+    this.showHistoryModal = false;
   }
 
   logout() {
