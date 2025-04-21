@@ -17,5 +17,12 @@ export class DataService {
   getMyScanHistory(): Observable<any> {
     return this.http.get<any>(`${this.baseUrl}/shared/scan/history`);
   }
-
+  
+  confirmGarbageCollection(qrCodeData: any): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/monthlydues/confirm-garbage-collection`, { qrCodeData });
+  }
+  
+  getGarbageCollectionStatus(accountNumber: string): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/garbage-collection`, { accountNumber });
+  }
 }

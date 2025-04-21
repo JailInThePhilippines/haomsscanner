@@ -17,6 +17,12 @@ export class ScanComponent implements OnInit, OnDestroy {
   homeowner: any = null;
   paymentStatus: string = '';
   errorMessage: string = '';
+  garbageCollectionEligible: boolean = false;
+  collectionConfirmed: boolean = false;
+  collectingGarbage: boolean = false;
+  rawQrCodeData: string = '';
+  eligibilityDetails: any = null;
+  todayCollectionAlreadyConfirmed: boolean = false;
 
   constructor(private dataService: DataService) { }
 
@@ -71,6 +77,7 @@ export class ScanComponent implements OnInit, OnDestroy {
       }
 
       console.log('Raw Scanned Text:', decodedText);
+      this.rawQrCodeData = decodedText;
 
       let qrData;
       try {
@@ -78,6 +85,7 @@ export class ScanComponent implements OnInit, OnDestroy {
       } catch (jsonError) {
         const cleanedText = this.cleanQRCodeData(decodedText);
         qrData = JSON.parse(cleanedText);
+        this.rawQrCodeData = cleanedText;
       }
 
       this.dataService.verifyPaymentByQRCode({
@@ -87,20 +95,76 @@ export class ScanComponent implements OnInit, OnDestroy {
           this.scanResult = true;
           this.homeowner = response.homeowner;
           this.paymentStatus = response.paymentStatus;
+          this.garbageCollectionEligible = response.garbageCollectionEligible || false;
+          this.eligibilityDetails = response.eligibilityDetails || null;
           this.errorMessage = '';
+          this.collectionConfirmed = false;
+
+          // If homeowner exists and has an account number, check today's collection status
+          if (this.homeowner && this.homeowner.accountNumber) {
+            this.checkTodayCollectionStatus(this.homeowner.accountNumber);
+          }
         },
         error: (err) => {
           this.scanResult = true;
           this.errorMessage = err.error?.message || 'Error verifying payment';
           this.homeowner = null;
+          this.garbageCollectionEligible = false;
+          this.eligibilityDetails = null;
           console.error('Verification Error:', err);
         }
       });
     } catch (error) {
       this.scanResult = true;
       this.errorMessage = 'Invalid QR code format';
+      this.garbageCollectionEligible = false;
+      this.eligibilityDetails = null;
       console.error('QR Code Parsing Error:', error);
     }
+  }
+
+  checkTodayCollectionStatus(accountNumber: string) {
+    this.dataService.getGarbageCollectionStatus(accountNumber).subscribe({
+      next: (response) => {
+        if (response.success && response.garbageCollectionStatus) {
+          const currentDate = new Date().toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          });
+
+          this.todayCollectionAlreadyConfirmed = response.garbageCollectionStatus.currentMonthCollections.some(
+            (collectionDate: string) => collectionDate.includes(currentDate)
+          );
+        }
+      },
+      error: (error) => {
+        console.error('Error checking collection status:', error);
+      }
+    });
+  }
+
+  confirmGarbageCollection() {
+    this.collectingGarbage = true;
+
+    this.dataService.confirmGarbageCollection(this.rawQrCodeData).subscribe({
+      next: (response) => {
+        this.collectionConfirmed = true;
+        this.collectingGarbage = false;
+      },
+      error: (err) => {
+        this.collectingGarbage = false;
+
+        if (err.error?.alreadyCollected) {
+          this.todayCollectionAlreadyConfirmed = true;
+          this.errorMessage = 'Garbage collection already confirmed for this homeowner today';
+        } else {
+          this.errorMessage = err.error?.message || 'Failed to confirm garbage collection';
+        }
+
+        console.error('Garbage Collection Error:', err);
+      }
+    });
   }
 
   private cleanQRCodeData(rawData: string): string {
@@ -119,6 +183,12 @@ export class ScanComponent implements OnInit, OnDestroy {
     this.homeowner = null;
     this.paymentStatus = '';
     this.errorMessage = '';
+    this.garbageCollectionEligible = false;
+    this.collectionConfirmed = false;
+    this.collectingGarbage = false;
+    this.rawQrCodeData = '';
+    this.eligibilityDetails = null;
+    this.todayCollectionAlreadyConfirmed = false;
 
     if (closeAfterReset) {
       this.scanComplete.emit();
@@ -160,6 +230,12 @@ export class ScanComponent implements OnInit, OnDestroy {
     this.homeowner = null;
     this.paymentStatus = '';
     this.errorMessage = '';
+    this.garbageCollectionEligible = false;
+    this.collectionConfirmed = false;
+    this.collectingGarbage = false;
+    this.rawQrCodeData = '';
+    this.eligibilityDetails = null;
+    this.todayCollectionAlreadyConfirmed = false;
   }
 
   onScanError(errorMessage: string) {
