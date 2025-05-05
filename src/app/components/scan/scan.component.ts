@@ -23,6 +23,8 @@ export class ScanComponent implements OnInit, OnDestroy {
   rawQrCodeData: string = '';
   eligibilityDetails: any = null;
   todayCollectionAlreadyConfirmed: boolean = false;
+  paymentDetails: any = null;
+  showPaymentDetails: boolean = false;
 
   constructor(private dataService: DataService) { }
 
@@ -97,6 +99,7 @@ export class ScanComponent implements OnInit, OnDestroy {
           this.paymentStatus = response.paymentStatus;
           this.garbageCollectionEligible = response.garbageCollectionEligible || false;
           this.eligibilityDetails = response.eligibilityDetails || null;
+          this.paymentDetails = response.paymentDetails || null;
           this.errorMessage = '';
           this.collectionConfirmed = false;
 
@@ -111,6 +114,7 @@ export class ScanComponent implements OnInit, OnDestroy {
           this.homeowner = null;
           this.garbageCollectionEligible = false;
           this.eligibilityDetails = null;
+          this.paymentDetails = null;
           console.error('Verification Error:', err);
         }
       });
@@ -119,6 +123,7 @@ export class ScanComponent implements OnInit, OnDestroy {
       this.errorMessage = 'Invalid QR code format';
       this.garbageCollectionEligible = false;
       this.eligibilityDetails = null;
+      this.paymentDetails = null;
       console.error('QR Code Parsing Error:', error);
     }
   }
@@ -188,7 +193,9 @@ export class ScanComponent implements OnInit, OnDestroy {
     this.collectingGarbage = false;
     this.rawQrCodeData = '';
     this.eligibilityDetails = null;
+    this.paymentDetails = null;
     this.todayCollectionAlreadyConfirmed = false;
+    this.showPaymentDetails = false;
 
     if (closeAfterReset) {
       this.scanComplete.emit();
@@ -235,7 +242,9 @@ export class ScanComponent implements OnInit, OnDestroy {
     this.collectingGarbage = false;
     this.rawQrCodeData = '';
     this.eligibilityDetails = null;
+    this.paymentDetails = null;
     this.todayCollectionAlreadyConfirmed = false;
+    this.showPaymentDetails = false;
   }
 
   onScanError(errorMessage: string) {
