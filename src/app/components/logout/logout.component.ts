@@ -1,21 +1,24 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
+import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
-import { BotMenuComponent } from "../bot-menu/bot-menu.component";
-import { RouterModule } from '@angular/router';
 
 @Component({
-  selector: 'app-home',
-  imports: [CommonModule, BotMenuComponent, RouterModule],
+  selector: 'app-logout',
   standalone: true,
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+  imports: [CommonModule],
+  template: `<div class="min-h-screen flex items-center justify-center bg-gradient-to-b from-sky-50 to-blue-100">
+    <div class="text-center">
+      <div class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-blue-600 border-r-transparent mb-4"></div>
+      <p class="text-gray-600">Logging out...</p>
+    </div>
+  </div>`,
 })
-export class HomeComponent {
-  constructor(private authService: AuthService) { }
+export class LogoutComponent implements OnInit {
+  constructor(private authService: AuthService, private router: Router) {}
 
-  logout() {
+  ngOnInit(): void {
     Swal.fire({
       title: 'Are you sure?',
       text: 'You will be logged out of your account.',
@@ -36,6 +39,8 @@ export class HomeComponent {
           showConfirmButton: false,
           timer: 3000
         });
+      } else {
+        this.router.navigate(['/']);
       }
     });
   }

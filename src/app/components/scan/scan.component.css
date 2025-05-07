@@ -1,0 +1,18 @@
+/* scan.component.css */
+:host {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    height: 100%;
+  }
+  
+  #reader {
+    width: 100%;
+  }
+  
+  /* Additional styles to ensure proper display of the QR scanner */
+  ::ng-deep #reader video {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover;
+  }

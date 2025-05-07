@@ -1,32 +1,90 @@
-/* Additional custom styles beyond Tailwind */
-.rounded-lg {
-    border-radius: 0.5rem;
+/* Make sure the component takes full height of its container */
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Custom scrollbar for better UX */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c5d5e4;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a3b9cc;
+}
+
+/* Smooth transitions */
+input, button {
+  transition: all 0.2s ease;
+}
+
+/* Style the status badges for better visibility */
+.bg-green-100.text-green-800, 
+.bg-red-100.text-red-800,
+.bg-gray-100.text-gray-800 {
+  transition: all 0.2s ease;
+  font-weight: 600;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+/* Add subtle row hover effect */
+tr.hover\:bg-gray-50:hover {
+  background-color: rgba(243, 244, 246, 0.8);
+  cursor: pointer;
+}
+
+/* Make sure table headers stay visible when scrolling */
+thead.sticky {
+  box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+}
+
+/* Animation for loading more content */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+tr {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Ensure the table container can scroll properly */
+.overflow-auto {
+  -webkit-overflow-scrolling: touch; /* For smoother scrolling on iOS */
+  scrollbar-width: thin; /* For Firefox */
+}
+
+/* Better focus state for the search input */
+input:focus {
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+  outline: none;
+}
+
+/* Make sure the component adapts well to smaller screens */
+@media (max-width: 640px) {
+  .px-6 {
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
   
-  /* Animation for the loading spinner */
-  @keyframes spin {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(360deg);
-    }
+  .p-4 {
+    padding: 0.75rem;
   }
   
-  .animate-spin {
-    animation: spin 1s linear infinite;
+  th, td {
+    padding: 0.5rem 0.75rem;
   }
-  
-  /* Table styles for better readability */
-  table {
-    border-collapse: separate;
-    border-spacing: 0;
-  }
-  
-  th {
-    font-weight: 600;
-  }
-  
-  thead {
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  }
+}

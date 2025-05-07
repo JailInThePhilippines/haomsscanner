@@ -1,40 +1,38 @@
-<div class="min-h-screen bg-gradient-to-b from-sky-50 to-blue-100 flex flex-col">
-  <!-- Header with logo -->
-  <header class="w-full py-6 flex justify-center">
-    <div class="container px-4 flex justify-center">
-      <img src="hoa-removedbg.png" alt="Logo" class="w-28 h-28 object-contain filter drop-shadow-md">
-    </div>
-  </header>
+<div class="h-screen flex flex-col">
+
+  <div class="bg-sky-900 text-white px-6 py-4 flex justify-between items-center shadow-md">
+    <h2 class="text-xl font-medium flex items-center">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
+        stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M3 9.75L12 3l9 6.75V21a1.5 1.5 0 01-1.5 1.5h-15A1.5 1.5 0 013 21V9.75z" />
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 22V12h6v10" />
+      </svg>
+      Home
+    </h2>
+  </div>
 
   <!-- Main content -->
-  <main class="flex-1 flex flex-col items-center justify-center px-4">
+  <main class="flex-1 flex flex-col items-center justify-center px-4 pb-16">
     <div class="w-full max-w-md bg-white rounded-xl shadow-lg overflow-hidden">
       <div class="bg-sky-900 py-5 px-6">
         <h1 class="text-2xl font-bold text-white text-center">Payment Verification</h1>
       </div>
-      
+
       <div class="p-6 space-y-6">
         <!-- Action buttons with icons -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <button 
-            (click)="openScannerModal()"
+          <a routerLink="/scan"
             class="flex items-center justify-center space-x-3 bg-sky-600 hover:bg-sky-700 text-white py-4 px-6 rounded-lg transition duration-300 shadow-md group">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1v-2a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1z" />
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 group-hover:scale-110 transition-transform"
+              fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
             </svg>
             <span class="font-medium">Scan QR Code</span>
-          </button>
-          
-          <button 
-            (click)="openHistoryModal()"
-            class="flex items-center justify-center space-x-3 bg-blue-500 hover:bg-blue-600 text-white py-4 px-6 rounded-lg transition duration-300 shadow-md group">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <span class="font-medium">Scan History</span>
-          </button>
+          </a>
         </div>
-        
+
         <!-- Optional: Additional info or instructions -->
         <div class="mt-6 pt-4 border-t border-gray-200">
           <p class="text-sm text-gray-600 text-center">
@@ -43,44 +41,9 @@
         </div>
       </div>
     </div>
-
-    <!-- Logout Button -->
-    <button 
-      (click)="logout()" 
-      class="mt-8 flex items-center space-x-2 bg-white hover:bg-red-50 text-red-600 border border-red-300 py-2 px-4 rounded-lg transition duration-300 shadow-sm">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-      </svg>
-      <span>Logout</span>
-    </button>
   </main>
 
-  <!-- Scanner Modal -->
-  <div *ngIf="showScannerModal" class="fixed inset-0 flex justify-center items-center z-50 backdrop-blur-sm">
-    <div class="bg-white rounded-xl w-11/12 max-w-lg max-h-[90vh] overflow-auto shadow-2xl">
-      <div class="flex justify-between items-center p-4 border-b">
-        <h2 class="text-xl font-semibold text-sky-900 flex items-center">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-sky-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1v-2a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1z" />
-          </svg>
-          Scan QR Code
-        </h2>
-        <button class="p-2 rounded-full hover:bg-gray-100 text-gray-600 hover:text-gray-800 transition-colors" (click)="closeScannerModal()">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-      </div>
-      <div class="p-4">
-        <app-scan (scanComplete)="closeScannerModal()"></app-scan>
-      </div>
-    </div>
-  </div>
 
-  <!-- History Modal -->
-  <div *ngIf="showHistoryModal" class="fixed inset-0 flex justify-center items-center z-50 backdrop-blur-sm">
-    <div class="w-11/12 max-w-4xl">
-      <app-history (closeModal)="closeHistoryModal()"></app-history>
-    </div>
-  </div>
+  <!-- Bottom Navigation Menu -->
+  <app-bot-menu></app-bot-menu>
 </div>

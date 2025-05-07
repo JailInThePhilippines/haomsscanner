@@ -1,0 +1,55 @@
+<nav class="fixed bottom-0 left-0 w-full bg-white shadow-lg border-t border-gray-200 z-50 safe-area-bottom">
+    <div class="flex justify-around items-center py-2 max-w-screen-lg mx-auto">
+        <!-- Home Button -->
+        <a routerLink="/home" routerLinkActive="text-indigo-600" [routerLinkActiveOptions]="{exact: true}"
+            class="flex flex-col items-center justify-center space-y-1 px-1 py-1 sm:py-2 w-1/4 group">
+            <svg xmlns="http://www.w3.org/2000/svg"
+                class="h-5 w-5 sm:h-6 sm:w-6 text-gray-500 group-[.text-indigo-600]:text-indigo-600" fill="none"
+                viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M3 9.75L12 3l9 6.75M4.5 10.5v9a1.5 1.5 0 001.5 1.5h3a1.5 1.5 0 001.5-1.5v-3.75A1.5 1.5 0 0112 14.25h0a1.5 1.5 0 011.5 1.5V19.5A1.5 1.5 0 0015 21h3a1.5 1.5 0 001.5-1.5v-9" />
+            </svg>
+            <span
+                class="text-[10px] sm:text-xs font-medium text-gray-500 group-[.text-indigo-600]:text-indigo-600 truncate">Home</span>
+        </a>
+
+        <!-- Scanning History Button -->
+        <a routerLink="/history" routerLinkActive="text-indigo-600" [routerLinkActiveOptions]="{exact: true}"
+            class="flex flex-col items-center justify-center space-y-1 px-1 py-1 sm:py-2 w-1/4 group">
+            <svg xmlns="http://www.w3.org/2000/svg"
+                class="h-5 w-5 sm:h-6 sm:w-6 text-gray-500 group-[.text-indigo-600]:text-indigo-600" fill="none"
+                viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            </svg>
+            <span
+                class="text-[10px] sm:text-xs font-medium text-gray-500 group-[.text-indigo-600]:text-indigo-600 truncate">History</span>
+        </a>
+
+        <!-- Scan QR Code Button -->
+        <a routerLink="/scan" routerLinkActive="text-indigo-600" [routerLinkActiveOptions]="{exact: true}"
+            class="flex flex-col items-center justify-center space-y-1 px-1 py-1 sm:py-2 w-1/4 group">
+            <svg xmlns="http://www.w3.org/2000/svg"
+                class="h-5 w-5 sm:h-6 sm:w-6 text-gray-500 group-[.text-indigo-600]:text-indigo-600" fill="none"
+                viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+            </svg>
+            <span
+                class="text-[10px] sm:text-xs font-medium text-gray-500 group-[.text-indigo-600]:text-indigo-600 truncate">Scan
+                QR</span>
+        </a>
+
+        <!-- Logout Button -->
+        <a (click)="logout()"
+            class="flex flex-col items-center justify-center space-y-1 px-1 py-1 sm:py-2 w-1/4 group cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6 text-gray-500 group-hover:text-red-500"
+                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+            <span
+                class="text-[10px] sm:text-xs font-medium text-gray-500 group-hover:text-red-500 truncate">Logout</span>
+        </a>
+    </div>
+</nav>

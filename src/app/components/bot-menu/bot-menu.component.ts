@@ -1,18 +1,17 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { AuthService } from '../../services/auth.service';
-import Swal from 'sweetalert2';
-import { BotMenuComponent } from "../bot-menu/bot-menu.component";
 import { RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import Swal from 'sweetalert2';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
-  selector: 'app-home',
-  imports: [CommonModule, BotMenuComponent, RouterModule],
-  standalone: true,
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+  selector: 'app-bot-menu',
+  imports: [RouterModule, CommonModule],
+  templateUrl: './bot-menu.component.html',
+  styleUrl: './bot-menu.component.css'
 })
-export class HomeComponent {
+export class BotMenuComponent {
+
   constructor(private authService: AuthService) { }
 
   logout() {
@@ -39,4 +38,5 @@ export class HomeComponent {
       }
     });
   }
+
 }

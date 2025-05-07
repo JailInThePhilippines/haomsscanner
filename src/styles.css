@@ -1,1 +1,13 @@
 /* You can add global styles to this file, and also import other style files */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+    .safe-area-bottom {
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+}
+
+/* For Android devices */
+@media screen and (display-mode: standalone) {
+    .safe-area-bottom {
+        padding-bottom: 16px;
+    }
+}
