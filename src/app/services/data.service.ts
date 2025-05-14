@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class DataService {
-  private baseUrl = 'https://hoamsapi.onrender.com/api';
+  private baseUrl = 'https://hoamsapi-v2ia.onrender.com/api';
 
   constructor(private http: HttpClient) { }
 

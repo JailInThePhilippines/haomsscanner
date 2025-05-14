@@ -14,8 +14,8 @@ export class AuthService {
 
   private tokenExpirationTimer: any;
   private baseUrls = {
-    superadmin: 'https://hoamsapi.onrender.com/api/superadmin',
-    admin: 'https://hoamsapi.onrender.com/api/admin'
+    superadmin: 'https://hoamsapi-v2ia.onrender.com/api/superadmin',
+    admin: 'https://hoamsapi-v2ia.onrender.com/api/admin'
   };
 
   constructor(
