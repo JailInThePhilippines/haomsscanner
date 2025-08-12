@@ -1,18 +1,102 @@
 /* scan.component.css */
 :host {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    height: 100%;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  height: 100%;
+}
+
+#reader {
+  width: 100%;
+}
+
+/* Additional styles to ensure proper display of the QR scanner */
+::ng-deep #reader video {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
   }
-  
-  #reader {
-    width: 100%;
+
+  to {
+    opacity: 1;
   }
-  
-  /* Additional styles to ensure proper display of the QR scanner */
-  ::ng-deep #reader video {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: cover;
+}
+
+@keyframes slide-up {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
   }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse-gentle {
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out;
+}
+
+.animate-pulse-gentle {
+  animation: pulse-gentle 2s infinite;
+}
+
+.backdrop-blur-sm {
+  backdrop-filter: blur(4px);
+}
+
+/* Ensure proper scrolling behavior */
+.max-h-\[60vh\] {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
+}
+
+.max-h-\[60vh\]::-webkit-scrollbar {
+  width: 6px;
+}
+
+.max-h-\[60vh\]::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.max-h-\[60vh\]::-webkit-scrollbar-thumb {
+  background-color: rgba(156, 163, 175, 0.5);
+  border-radius: 3px;
+}
+
+.max-h-\[60vh\]::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(156, 163, 175, 0.7);
+}
+
+/* allow the scrollable body inside a flex container to actually shrink/scroll */
+:host ::ng-deep .modal-body {
+  min-height: 0;                    /* critical for flex children overflow */
+  -webkit-overflow-scrolling: touch;/* smooth scrolling on iOS */
+}
+
+/* optional: style the footer's safe area if you prefer to keep styles in CSS */
+:host ::ng-deep .modal-footer-safe {
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 1rem);
+}

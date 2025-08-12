@@ -11,8 +11,8 @@
   </div>
 
   <main class="flex-1 flex flex-col overflow-y-auto pb-16">
-    <app-scan class="flex-1 flex flex-col"></app-scan>
+    <app-scan #scanner class="flex-1 flex flex-col"></app-scan>
   </main>
 
-  <app-bot-menu></app-bot-menu>
+  <app-bot-menu *ngIf="!scanner.scanResult"></app-bot-menu>
 </div>
