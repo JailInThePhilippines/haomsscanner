@@ -97,8 +97,8 @@
                             </td>
                             <td class="px-4 py-3 whitespace-nowrap">
                                 <span [ngClass]="getStatusClass(scan.paymentStatus)"
-                                    class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full capitalize">
-                                    {{ scan.paymentStatus }}
+                                    class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full">
+                                    {{ getDisplayStatus(scan.paymentStatus) }}
                                 </span>
                             </td>
                             <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
@@ -122,6 +122,6 @@
             </div>
         </div>
     </div>
-    
+
     <app-bot-menu></app-bot-menu>
 </div>
