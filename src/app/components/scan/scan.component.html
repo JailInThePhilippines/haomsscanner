@@ -83,29 +83,57 @@
           <!-- Status Cards -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <!-- Payment Status Card -->
-            <div [ngClass]="paymentStatus === 'paid' 
-                            ? 'bg-gradient-to-br from-green-50 to-green-100 border-green-200' 
-                            : 'bg-gradient-to-br from-red-50 to-red-100 border-red-200'"
+            <div [ngClass]="paymentStatus === 'paid'
+                             ? 'bg-gradient-to-br from-green-50 to-green-100 border-green-200'
+                             : paymentStatus === 'exempt'
+                             ? 'bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200'
+                             : 'bg-gradient-to-br from-red-50 to-red-100 border-red-200'"
               class="rounded-xl p-5 border shadow-sm">
+
               <div class="flex items-center space-x-3">
-                <div [ngClass]="paymentStatus === 'paid' ? 'bg-green-500' : 'bg-red-500'"
-                  class="p-3 rounded-full shadow-md">
+                <div [ngClass]="paymentStatus === 'paid' 
+                    ? 'bg-green-500' 
+                    : paymentStatus === 'exempt' 
+                    ? 'bg-blue-500' 
+                    : 'bg-red-500'" class="p-3 rounded-full shadow-md">
+
+                  <!-- Paid Status Icon -->
                   <svg *ngIf="paymentStatus === 'paid'" class="w-6 h-6 text-white" fill="currentColor"
                     viewBox="0 0 24 24">
                     <path
                       d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
                   </svg>
-                  <svg *ngIf="paymentStatus !== 'paid'" class="w-6 h-6 text-white" fill="currentColor"
+
+                  <!-- Exempt Status Icon -->
+                  <svg *ngIf="paymentStatus === 'exempt'" class="w-6 h-6 text-white" fill="currentColor"
                     viewBox="0 0 24 24">
+                    <path
+                      d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17h2v-2h-2v2zm0-4h2V7h-2v10z" />
+                  </svg>
+
+                  <!-- Unpaid Status Icon -->
+                  <svg *ngIf="paymentStatus !== 'paid' && paymentStatus !== 'exempt'" class="w-6 h-6 text-white"
+                    fill="currentColor" viewBox="0 0 24 24">
                     <path
                       d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
                   </svg>
+
                 </div>
+
                 <div class="min-w-0 flex-1">
-                  <p [ngClass]="paymentStatus === 'paid' ? 'text-green-700' : 'text-red-700'"
-                    class="text-sm font-medium">Payment Status</p>
-                  <p [ngClass]="paymentStatus === 'paid' ? 'text-green-800' : 'text-red-800'"
-                    class="text-xl font-bold capitalize truncate">{{ paymentStatus }}</p>
+                  <p [ngClass]="paymentStatus === 'paid' 
+                    ? 'text-green-700' 
+                    : paymentStatus === 'exempt' 
+                    ? 'text-blue-700' 
+                    : 'text-red-700'" class="text-sm font-medium">Payment Status</p>
+
+                  <p [ngClass]="paymentStatus === 'paid' 
+                    ? 'text-green-800' 
+                    : paymentStatus === 'exempt' 
+                    ? 'text-blue-800' 
+                    : 'text-red-800'" class="text-xl font-bold capitalize truncate">
+                    {{ paymentStatus === 'exempt' ? 'Exempted' : paymentStatus }}
+                  </p>
                 </div>
               </div>
             </div>
@@ -344,7 +372,8 @@
       </div>
 
       <!-- Enhanced Footer with Action Buttons -->
-      <div class="bg-white border-t border-gray-100 p-6 flex-shrink-0" style="padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 1rem);">
+      <div class="bg-white border-t border-gray-100 p-6 flex-shrink-0"
+        style="padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 1rem);">
         <div class="flex flex-col sm:flex-row gap-3">
           <button (click)="closeModal()"
             class="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white py-3 px-6 rounded-xl font-medium transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center justify-center space-x-2">
