@@ -48,7 +48,7 @@ export class LoginComponent implements OnInit {
   get f() { return this.loginForm.controls; }
 
   navigateByRole(role: string): void {
-    const dashboardPath = role === 'admin' ? '/admin/home' : '/superadmin/home';
+    const dashboardPath = role === 'admin' ? '/home' : '/home';
     this.router.navigate([dashboardPath]);
   }
 
