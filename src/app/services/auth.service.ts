@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
@@ -40,7 +40,7 @@ export class AuthService {
 
   login(email: string, password: string, role: 'superadmin' | 'admin' = 'superadmin'): Observable<AuthResponse> {
     const baseUrl = this.baseUrls[role];
-    
+
     return this.http.post<AuthResponse>(`${baseUrl}/auth/login`, { email, password }, { withCredentials: true })
       .pipe(
         tap(response => {
@@ -70,23 +70,30 @@ export class AuthService {
   logout(): void {
     const role = localStorage.getItem('userRole') || 'superadmin';
     const baseUrl = this.baseUrls[role as 'superadmin' | 'admin'];
-    
+
     this.http.post(`${baseUrl}/logout`, {}).subscribe({
       next: () => this.handleLogout(),
       error: () => this.handleLogout()
     });
   }
 
-  public handleLogout(): void {
+  public handleLogout(reason?: string): void {
     localStorage.removeItem('currentUser');
     localStorage.removeItem('accessToken');
     localStorage.removeItem('fullName');
     localStorage.removeItem('userRole');
+    localStorage.removeItem('hideFileInstructions');
     this.currentUserSubject.next(null);
 
     if (this.tokenExpirationTimer) {
       clearTimeout(this.tokenExpirationTimer);
       this.tokenExpirationTimer = null;
+    }
+
+    // Show different messages based on logout reason
+    if (reason === 'SESSION_INVALIDATED') {
+      // You can show a toast/alert here
+      console.log('Your session has been invalidated by an administrator.');
     }
 
     this.router.navigate(['/auth/login']);
@@ -95,29 +102,37 @@ export class AuthService {
   refreshToken(): Observable<string> {
     const role = localStorage.getItem('userRole') || 'superadmin';
     const baseUrl = this.baseUrls[role as 'superadmin' | 'admin'];
-    
+
     return this.http.post<{ accessToken: string, user?: User }>(`${baseUrl}/refresh-token`, {}, {
       withCredentials: true
     })
       .pipe(
         map(response => {
           localStorage.setItem('accessToken', response.accessToken);
-          
+
           if (response.user) {
             localStorage.setItem('currentUser', JSON.stringify(response.user));
             this.currentUserSubject.next(response.user);
           }
-          
+
           const expirationTime = this.getTokenRemainingTime(response.accessToken);
           this.autoLogout(expirationTime);
-          
+
           return response.accessToken;
         }),
-        catchError(error => {
+        catchError((error: HttpErrorResponse) => {
           console.error('Token refresh failed:', error);
-          if (error.status === 401 || error.status === 403) {
-            this.handleLogout();
+
+          // Handle specific error codes
+          if (error.status === 401) {
+            const errorCode = error.error?.code;
+            if (errorCode === 'SESSION_INVALIDATED') {
+              this.handleLogout('SESSION_INVALIDATED');
+            } else {
+              this.handleLogout();
+            }
           }
+
           return throwError(() => new Error('Token refresh failed'));
         })
       );
@@ -128,10 +143,10 @@ export class AuthService {
       clearTimeout(this.tokenExpirationTimer);
       this.tokenExpirationTimer = null;
     }
-    
+
     if (expirationDuration > 0) {
       const refreshTime = expirationDuration > 60000 ? expirationDuration - 60000 : expirationDuration / 2;
-      
+
       this.tokenExpirationTimer = setTimeout(() => {
         this.refreshToken().subscribe({
           next: token => console.log('Token refreshed successfully via timer'),
@@ -142,6 +157,17 @@ export class AuthService {
         });
       }, refreshTime);
     }
+  }
+
+  // NEW: Force logout all admins (SuperAdmin only)
+  forceLogoutAllAdmins(): Observable<any> {
+    return this.http.post(`${this.baseUrls.superadmin}/force-logout-all-admins`, {})
+      .pipe(
+        catchError(error => {
+          console.error('Force logout all admins error:', error);
+          return throwError(() => new Error(error.error?.message || 'Failed to logout all admins'));
+        })
+      );
   }
 
   getToken(): string | null {

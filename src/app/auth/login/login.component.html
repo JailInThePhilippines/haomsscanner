@@ -19,9 +19,9 @@
             <!-- Logo and title section -->
             <div class="flex flex-col items-center mb-8">
                 <img src="hoa-removedbg.png" class="w-24 h-24 mb-4" alt="HOA Logo" />
-                <h1 class="text-3xl font-bold text-center">HOASCAN</h1>
+                <h1 class="text-3xl font-bold text-center">HOA Management Portal</h1>
                 <div class="h-1 w-24 bg-blue-950 mt-2 mb-4 rounded-full"></div>
-                <p class="text-gray-700 text-sm">SCAN SMART - MANAGE BETTER</p>
+                <p class="text-gray-700 text-sm">Manage your community with ease</p>
             </div>
 
             <!-- Login form -->
@@ -59,40 +59,29 @@
                                     clip-rule="evenodd" />
                             </svg>
                         </div>
-                        <input type="password" id="password" formControlName="password"
-                            class="bg-opacity-40 placeholder-gray-400 w-full pl-10 pr-4 py-3 rounded-lg border border-gray-700 focus:outline-none focus:border-blue-900 focus:ring-1 focus:ring-blue-900 transition duration-200"
+                        <input [type]="showPassword ? 'text' : 'password'" id="password" formControlName="password"
+                            class="bg-opacity-40 placeholder-gray-400 w-full pl-10 pr-10 py-3 rounded-lg border border-gray-700 focus:outline-none focus:border-blue-900 focus:ring-1 focus:ring-blue-900 transition duration-200"
                             placeholder="••••••••" />
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                            <button type="button" class="text-gray-400 hover:text-gray-600 focus:outline-none"
+                                (click)="togglePasswordVisibility()">
+                                <svg *ngIf="!showPassword" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5"
+                                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                                <svg *ngIf="showPassword" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                     <div *ngIf="submitted && f['password'].errors" class="text-red-300 text-xs mt-1">
                         <span *ngIf="f['password'].errors['required']">Password is required</span>
-                    </div>
-                </div>
-
-                <div class="space-y-2">
-                    <label class="text-gray-700 text-sm font-medium block">Login As</label>
-                    <div class="role-toggle" formControlName="role">
-                        <input type="radio" id="superadmin" formControlName="role" value="superadmin" />
-                        <label for="superadmin" class="role-option">
-                            <span class="role-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd"
-                                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z"
-                                        clip-rule="evenodd" />
-                                </svg>
-                            </span>
-                            Super Admin
-                        </label>
-                        <input type="radio" id="admin" formControlName="role" value="admin" />
-                        <label for="admin" class="role-option">
-                            <span class="role-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                    <path
-                                        d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
-                                </svg>
-                            </span>
-                            Admin
-                        </label>
-                        <div class="slider"></div>
                     </div>
                 </div>
 
@@ -110,7 +99,7 @@
 
             <!-- Footer text -->
             <div class="mt-8 text-center text-xs">
-                <p>© 2025 HOA Administration. All rights reserved.</p>
+                <p>© 2025 ICTe Solutions. All rights reserved.</p>
             </div>
         </div>
         <div class="hidden lg:block lg:w-1/2 bg-cover bg-center">

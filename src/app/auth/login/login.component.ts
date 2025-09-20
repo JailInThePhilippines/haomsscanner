@@ -4,6 +4,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
 import Swal from 'sweetalert2';
+import { forkJoin, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 @Component({
   selector: 'app-login',
@@ -16,8 +18,7 @@ export class LoginComponent implements OnInit {
   loading = false;
   submitted = false;
   error = '';
-  returnUrl: string = '/home';
-  userRole: 'superadmin' | 'admin' = 'superadmin';
+  showPassword = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -27,33 +28,29 @@ export class LoginComponent implements OnInit {
   ) {
     this.loginForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required],
-      role: ['superadmin', Validators.required]
+      password: ['', Validators.required]
     });
 
     if (this.authService.isAuthenticated()) {
       const role = this.authService.getCurrentUserRole();
-      this.navigateToHomePage(role || 'superadmin');
+      this.navigateByRole(role || 'superadmin');
     }
   }
 
   ngOnInit(): void {
-    const routeRole = this.route.snapshot.queryParams['role'];
-    if (routeRole === 'admin') {
-      this.userRole = 'admin';
-      this.loginForm.get('role')?.setValue('admin');
-      this.returnUrl = '/home';
-    } else {
-      this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/home';
-    }
+    // No need for role change subscription anymore
+  }
 
-    this.loginForm.get('role')?.valueChanges.subscribe(role => {
-      this.userRole = role;
-      this.returnUrl = role === 'admin' ? '/home' : '/home';
-    });
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
   }
 
   get f() { return this.loginForm.controls; }
+
+  navigateByRole(role: string): void {
+    const dashboardPath = role === 'admin' ? '/admin/dashboard' : '/superadmin/dashboard';
+    this.router.navigate([dashboardPath]);
+  }
 
   onSubmit(): void {
     this.submitted = true;
@@ -67,41 +64,79 @@ export class LoginComponent implements OnInit {
 
     const email = this.f['email'].value;
     const password = this.f['password'].value;
-    const role = this.f['role'].value;
 
-    this.authService.login(email, password, role)
-      .subscribe({
-        next: () => {
+    // Try both roles simultaneously
+    const superAdminLogin = this.authService.loginAsSuperAdmin(email, password).pipe(
+      catchError(error => of({ error: true, role: 'superadmin', message: error.message }))
+    );
+
+    const adminLogin = this.authService.loginAsAdmin(email, password).pipe(
+      catchError(error => of({ error: true, role: 'admin', message: error.message }))
+    );
+
+    forkJoin([superAdminLogin, adminLogin]).subscribe({
+      next: ([superAdminResult, adminResult]) => {
+        this.loading = false;
+
+        // Check if superadmin login was successful
+        if (!this.hasError(superAdminResult)) {
           Swal.fire({
             icon: 'success',
             title: 'Login Successful!',
+            text: 'Welcome Super Admin',
             toast: true,
             position: 'top-end',
             showConfirmButton: false,
             timer: 3000
           });
-
-          this.navigateToHomePage(role);
-        },
-        error: error => {
-          this.error = error.message || 'Invalid credentials';
-          this.loading = false;
-
-          Swal.fire({
-            icon: 'error',
-            title: 'Login Failed!',
-            text: this.error,
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000
-          });
+          this.navigateByRole('superadmin');
+          return;
         }
-      });
+
+        // Check if admin login was successful
+        if (!this.hasError(adminResult)) {
+          Swal.fire({
+            icon: 'success',
+            title: 'Login Successful!',
+            text: 'Welcome Admin',
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000
+          });
+          this.navigateByRole('admin');
+          return;
+        }
+
+        // Both failed
+        this.error = 'Invalid credentials for both Super Admin and Admin roles';
+        Swal.fire({
+          icon: 'error',
+          title: 'Login Failed!',
+          text: this.error,
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 3000
+        });
+      },
+      error: (error) => {
+        this.loading = false;
+        this.error = 'An unexpected error occurred';
+        Swal.fire({
+          icon: 'error',
+          title: 'Login Failed!',
+          text: this.error,
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 3000
+        });
+      }
+    });
   }
 
-  navigateToHomePage(role: string): void {
-    const homePath = role === 'admin' ? '/home' : '/home';
-    this.router.navigate([homePath]);
+  private hasError(result: any): boolean {
+    return result && result.error === true;
   }
 }
