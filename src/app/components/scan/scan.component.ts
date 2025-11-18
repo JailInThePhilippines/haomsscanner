@@ -37,7 +37,6 @@ export class ScanComponent implements OnInit, OnDestroy {
 
   initializeScanner() {
     if (this.scannerInitialized && this.html5QrCode) {
-      // If scanner was just paused, resume it
       if (this.scannerStopped) {
         this.resumeScanning();
       }
@@ -95,32 +94,25 @@ export class ScanComponent implements OnInit, OnDestroy {
 
   onScanSuccess(decodedText: string) {
     try {
-      // If scanner is stopped (paused), don't process the scan
       if (this.scannerStopped) {
         return;
       }
       
-      // Pause the scanner but don't stop it completely
       this.pauseScanning();
 
       console.log('Raw Scanned Text:', decodedText);
-      this.rawQrCodeData = decodedText;
+      
+      // Clean the QR code data if needed
+      const cleanedData = this.cleanQRCodeData(decodedText);
+      this.rawQrCodeData = cleanedData;
 
       // Reset collection flags for each new scan
       this.todayCollectionAlreadyConfirmed = false;
       this.collectionConfirmed = false;
 
-      let qrData;
-      try {
-        qrData = JSON.parse(decodedText);
-      } catch (jsonError) {
-        const cleanedText = this.cleanQRCodeData(decodedText);
-        qrData = JSON.parse(cleanedText);
-        this.rawQrCodeData = cleanedText;
-      }
-
+      // Send the raw string directly - backend will parse it
       this.dataService.verifyPaymentByQRCode({
-        qrCodeData: JSON.stringify(qrData)
+        qrCodeData: cleanedData  // Send as-is, don't parse or stringify
       }).subscribe({
         next: (response) => {
           this.scanResult = true;
@@ -131,11 +123,9 @@ export class ScanComponent implements OnInit, OnDestroy {
           this.paymentDetails = response.paymentDetails || null;
           this.errorMessage = '';
 
-          // Only check collection status if homeowner is eligible
           if (this.homeowner && this.homeowner.accountNumber && this.garbageCollectionEligible) {
             this.checkTodayCollectionStatus(this.homeowner.accountNumber);
           } else {
-            // Reset for ineligible homeowners
             this.todayCollectionAlreadyConfirmed = false;
           }
         },
@@ -161,13 +151,9 @@ export class ScanComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Pause scanning without destroying the scanner instance
   private pauseScanning() {
     if (this.html5QrCode && this.html5QrCode.isScanning) {
       try {
-        // For older versions of html5-qrcode that don't have pause/resume
-        // We'll just pause scanning by setting a flag and let the scanner keep running
-        // but we won't process any results until resumed
         this.scannerStopped = true;
         console.log('Scanner logically paused');
       } catch (err) {
@@ -176,7 +162,6 @@ export class ScanComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Resume scanning with existing scanner instance
   private resumeScanning() {
     if (this.html5QrCode) {
       try {
@@ -186,7 +171,6 @@ export class ScanComponent implements OnInit, OnDestroy {
         }
       } catch (err) {
         console.error('Error resuming scanner:', err);
-        // If resume fails, try to re-initialize
         this.scannerInitialized = false;
         this.initializeScanner();
       }
@@ -207,13 +191,11 @@ export class ScanComponent implements OnInit, OnDestroy {
             (collectionDate: string) => collectionDate.includes(currentDate)
           );
         } else {
-          // Reset flag if no status is returned
           this.todayCollectionAlreadyConfirmed = false;
         }
       },
       error: (error) => {
         console.error('Error checking collection status:', error);
-        // Reset flag on error
         this.todayCollectionAlreadyConfirmed = false;
       }
     });
@@ -226,6 +208,7 @@ export class ScanComponent implements OnInit, OnDestroy {
     
     this.collectingGarbage = true;
 
+    // Send raw QR code data directly
     this.dataService.confirmGarbageCollection(this.rawQrCodeData).subscribe({
       next: (response) => {
         this.collectionConfirmed = true;
@@ -248,6 +231,7 @@ export class ScanComponent implements OnInit, OnDestroy {
   }
 
   private cleanQRCodeData(rawData: string): string {
+    // Remove any HTML tags that might be accidentally included
     let cleanedData = rawData
       .replace(/<!DOCTYPE.*?>/i, '')
       .replace(/<\/?html.*?>/i, '')
@@ -258,14 +242,12 @@ export class ScanComponent implements OnInit, OnDestroy {
     return cleanedData;
   }
 
-  // Close modal and resume scanning
   closeModal() {
     this.scanResult = false;
     this.errorMessage = '';
     this.collectionConfirmed = false;
     this.showPaymentDetails = false;
     
-    // Clear homeowner-specific data
     this.homeowner = null;
     this.paymentStatus = '';
     this.garbageCollectionEligible = false;
@@ -273,7 +255,6 @@ export class ScanComponent implements OnInit, OnDestroy {
     this.eligibilityDetails = null;
     this.paymentDetails = null;
     
-    // Resume the scanner
     if (this.scannerInitialized) {
       this.resumeScanning();
     } else {
@@ -281,16 +262,13 @@ export class ScanComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Handle backdrop click - only close if clicking on backdrop
   onBackdropClick(event: MouseEvent) {
     if (event.target === event.currentTarget) {
       this.closeModal();
     }
   }
 
-  // Complete reset - use when needed to fully reset the scanner
   resetScanner() {
-    // Just make sure the scanner is running and not in paused state
     if (!this.scannerInitialized || !this.html5QrCode) {
       this.initializeScanner();
       return;
@@ -301,7 +279,6 @@ export class ScanComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Full reset including scanner destruction
   completeReset() {
     if (this.html5QrCode) {
       try {
