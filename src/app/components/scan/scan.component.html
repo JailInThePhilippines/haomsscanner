@@ -50,33 +50,59 @@
         <ng-container *ngIf="homeowner && !errorMessage">
 
           <!-- Property Information Card -->
-          <div class="bg-white rounded-xl shadow-md border border-gray-100 p-5 mb-6">
-            <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+          <div class="bg-white rounded-xl shadow-md border border-gray-100 p-4 sm:p-5 mb-6">
+            <h3 class="text-base sm:text-lg font-semibold text-gray-800 mb-4 flex items-center">
               <svg class="w-5 h-5 mr-2 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M19 21V9l-7-5-7 5v12h14zM12 2l10 7v12H2V9l10-7z" />
               </svg>
               Property Details
             </h3>
-            <div class="grid grid-cols-2 gap-4">
+
+            <!-- Responsive Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+
+              <!-- Block -->
               <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg border border-gray-100">
-                <svg class="w-5 h-5 text-gray-500 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 sm:w-5 sm:h-5 text-gray-500 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
                   <path
                     d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zM12 11.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
                 </svg>
-                <div class="min-w-0 flex-1">
-                  <p class="text-sm font-medium text-gray-600">Block</p>
-                  <p class="text-lg font-bold text-gray-800 truncate">{{ homeowner.block }}</p>
+                <div class="min-w-0">
+                  <p class="text-xs sm:text-sm font-medium text-gray-600">Block</p>
+                  <p class="text-base sm:text-lg font-bold text-gray-800 truncate">
+                    {{ homeowner.block }}
+                  </p>
                 </div>
               </div>
+
+              <!-- Lot -->
               <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg border border-gray-100">
-                <svg class="w-5 h-5 text-gray-500 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 sm:w-5 sm:h-5 text-gray-500 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
                 </svg>
-                <div class="min-w-0 flex-1">
-                  <p class="text-sm font-medium text-gray-600">Lot</p>
-                  <p class="text-lg font-bold text-gray-800 truncate">{{ homeowner.lot }}</p>
+                <div class="min-w-0">
+                  <p class="text-xs sm:text-sm font-medium text-gray-600">Lot</p>
+                  <p class="text-base sm:text-lg font-bold text-gray-800 truncate">
+                    {{ homeowner.lot }}
+                  </p>
                 </div>
               </div>
+
+              <!-- Phase -->
+              <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg border border-gray-100">
+                <svg class="w-4 h-4 sm:w-5 sm:h-5 text-gray-500 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                  <!-- Layers / Phase icon -->
+                  <path
+                    d="M12 2L1 7l11 5 9-4.09V17h2V7L12 2zm0 7.18L4.24 7 12 3.82 19.77 7 12 9.18zM1 12l11 5 11-5-2.2-1-8.8 4-8.8-4L1 12zm0 5l11 5 11-5-2.2-1-8.8 4-8.8-4L1 17z" />
+                </svg>
+                <div class="min-w-0">
+                  <p class="text-xs sm:text-sm font-medium text-gray-600">Phase</p>
+                  <p class="text-base sm:text-lg font-bold text-gray-800 truncate">
+                    {{ homeowner.phase }}
+                  </p>
+                </div>
+              </div>
+
             </div>
           </div>
 

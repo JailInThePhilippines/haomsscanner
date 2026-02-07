@@ -78,7 +78,7 @@
                         <tr>
                             <th scope="col"
                                 class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Block/Lot
+                                Block/Lot/Phase
                             </th>
                             <th scope="col"
                                 class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -97,7 +97,7 @@
                     <tbody class="bg-white divide-y divide-gray-200">
                         <tr *ngFor="let scan of displayedHistory" class="hover:bg-gray-50">
                             <td class="px-4 py-3 whitespace-nowrap">
-                                <div class="text-sm text-gray-900">Block {{ scan.block }}, Lot {{ scan.lot }}</div>
+                                <div class="text-sm text-gray-900">Block {{ scan.block }}, Lot {{ scan.lot }}, Phase {{scan.phase}}</div>
                             </td>
                             <td class="px-4 py-3 whitespace-nowrap">
                                 <span [ngClass]="getStatusClass(scan.paymentStatus)"
